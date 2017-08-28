@@ -12,7 +12,7 @@ compile:
 .PHONY: link
 link:
 	@echo Linking...
-	bsc -e mkTb -sim -o ./out -simdir build -p .:%/Prelude:%/Libraries:%/Libraries/BlueNoC:./src_common:./src_tb:./src_v01 -bdir build -keep-fires 
+	bsc -e mkTb -sim -o ./out -simdir build -p .:%/Prelude:%/Libraries:%/Libraries/BlueNoC:./src_common:./src_tb:./src_v01 -bdir build -keep-fires src_c/checker.c
 	@echo Linking finished
 
 .PHONY: simulate
