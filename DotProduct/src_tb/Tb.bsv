@@ -9,6 +9,8 @@ package Tb;
    import GTypes     :: *; // Common type definitions here
    import DotProduct :: *; // The DUT is implemented here
 
+   import "BDPI" function OutData c_mac (OutData o, InData w, InData x);
+
    // Test bench module (top-level, therefore Empty interface)
    (* synthesize *)
    module mkTb (Empty);
@@ -35,6 +37,8 @@ package Tb;
       return (extend (a) * extend (b));
    endfunction
 
+   Bool debug = False;
+
    // Seed the LFSRs
    rule start (!rg_started);
       rg_started <= True;
@@ -58,6 +62,9 @@ package Tb;
       dut.aIn.put (m);
       dinGenH.next; dinGenL.next;
       rg_numTests <= rg_numTests + 1;
+
+      if (debug) $display ("(%5d)::TB::putIn::Test# %0d::",
+	 cur_cycle, rg_numTests, fshow (m));
    endrule
 
    // This rule samples the output from the DUT. Also checks the answer
@@ -67,10 +74,17 @@ package Tb;
       let tNum = f_testNum.first; f_testNum.deq;
 
       let ws = rg_ws;
-      let v_uv = zipWith (fv_mul, dIn, ws);
-      let uv_sum = (foldl1 (\+ , v_uv));
+      OutData uv_sum = 0;
+
+      // Compute golden value using the C routine
+      for (Integer i=0; i < 8; i = i+1)
+	 uv_sum = c_mac (uv_sum, ws[i], dIn[i]);
+
+      // Get the computed value from the hardware
       let rowOut <- dut.yOut.get;
 
+      // Compare ...
+      // Mismatch found
       if (uv_sum != rowOut) begin
          $display ("(%5d)::TB::ERROR - OUTPUT MISMATCH (TEST# %0d)",
 	    cur_cycle, tNum);
@@ -79,6 +93,7 @@ package Tb;
          $finish;
       end
 
+      // No mismatch found
       else begin
 	 if ((rg_numTests % 100000) == 0) begin
 	    $display ("(%5d)::TB::%d tests passed. Ending test...",
