@@ -78,8 +78,7 @@ Get used to searching through the reference guide:
     $BLUESPECDIR/../doc/BSV/bsv-reference-guide.pdf
 
 Get familiar with the Vector library, it will prove very useful. There is a
-chapter on Vectors in the reference guide. You do not need to remember things,
-just need to know where to look
+chapter on Vectors in the reference guide.
 
 ------------------------------------------------------------------------
 Guidelines
