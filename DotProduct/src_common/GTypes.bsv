@@ -10,10 +10,23 @@ package GTypes;
 
    typedef Vector #(NUM_COL, InData)   MatrixRow;
 
+   import "BDPI" function OutData c_mac (OutData o, InData w, InData x);
+
    interface DotProduct;
       interface Put #(MatrixRow) aIn;
       interface Get #(OutData) yOut;
    endinterface
+
+   // ================================================================
+   // This function computes the expected output based on the C function which
+   // implements the MAC operation
+   function OutData fn_computeExpected (Reg#(MatrixRow) rg_ws, MatrixRow dIn);
+      let ws = rg_ws;
+      OutData expected = 0;
+      for (Integer i=0; i<valueOf(NUM_COL); i=i+1)
+	 expected = c_mac (expected, ws[i], dIn[i]);
+      return (expected);
+   endfunction
 
    // ================================================================
    // A convenience function to return the current cycle number during BSV

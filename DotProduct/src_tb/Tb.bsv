@@ -9,8 +9,6 @@ package Tb;
    import GTypes     :: *; // Common type definitions here
    import DotProduct :: *; // The DUT is implemented here
 
-   import "BDPI" function OutData c_mac (OutData o, InData w, InData x);
-
    // Test bench module (top-level, therefore Empty interface)
    (* synthesize *)
    module mkTb (Empty);
@@ -83,23 +81,19 @@ package Tb;
       let dIn = f_in.first; f_in.deq;
       let tNum = f_testNum.first; f_testNum.deq;
 
-      // Compute golden value using the C routine
-      let ws = rg_ws;
-      OutData uv_sum = 0;
-
-      for (Integer i=0; i < 8; i = i+1)
-	 uv_sum = c_mac (uv_sum, ws[i], dIn[i]);
+      // Compute expected output value using the C routine
+      OutData golden = fn_computeExpected (rg_ws, dIn);
 
       // Get the computed value from the hardware
       let rowOut <- dut.yOut.get;
 
       // Compare ...
       // Mismatch found
-      if (uv_sum != rowOut) begin
+      if (golden != rowOut) begin
          $display ("(%5d)::TB::ERROR - OUTPUT MISMATCH (TEST# %0d)",
 	    cur_cycle, tNum);
          $display ("       TB::DIN = ", fshow (dIn));
-         $display ("       TB::EXP = %08h|DUT = %08h", uv_sum, rowOut);
+         $display ("       TB::EXP = %08h|DUT = %08h", golden, rowOut);
          $finish;
       end
 
