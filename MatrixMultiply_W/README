@@ -1,0 +1,109 @@
+--------------------------------------------------------------
+Designing a matrix-multiply compute core - Wide implementation
+--------------------------------------------------------------
+
+This directory contains the programming assignment to design a block which
+computes the product of a matrix with a vector. This is a wide implementation
+in the sense that the entire vector is received in a single cycle.
+
+For instance, given W and A:
+
+A = (a; b; c)
+
+W = (w00; w01; w02; w03; w04)
+    (w10; w11; w12; w13; w14)
+    (w20; w21; w22; w23; w24)
+
+Y = W * A is a 5x1 vector. 
+
+The module will be pre-loaded with the Weights Matrix, W in a two-dimensional
+array of registers
+
+The module receives a streaming input of A vectors, one vector per cycle.
+
+The goal is to design a implementation which outputs one term of the Y vector
+every cycle.
+
+For the sake of this exercise assume that it's an endless stream of A vectors.
+The module computes the product for each A, and drives out the result Y, one
+term per cycle.
+
+v01 - a fixed size implementation
+----------------------------------
+In the first version, assume fixed values for the sizes of W and A, and
+therefore, Y. Let's assume W is a 7x5 matric, therefore A is a 5x1 matrix and
+Y is a 7x1 matrix
+
+Design notes:
+
+The primary compute operaton for computing the product is the MAC operation
+
+MAC Operation: m <= m + (w[i][j]*a[j]);
+
+I recommend you capture this operation in a function.
+
+You can consider implementing W as a vector of a shift registers, one for each
+column of W.
+
+v02 - a generic implementation
+------------------------------
+Generalize the v01 implementation to work for any sized W.
+
+Implement parameters specifying the size of W-Row, W-Column. You may assume
+that the width of A will be the same as W-Column.
+
+------------------------------------------------------------------------
+Assignment
+----------
+
+Your assignment is to first create the v01 implementation, and verify that it
+is working correctly by running it on the test-bench. The test-bench has logic
+to check the results.
+
+On successful completion of v01, please be ready to explain how your logic
+works.
+
+Finally, you will also be expected to complete the v02 version as well.
+For v02, we will create different instance with different sizes to test it.
+
+------------------------------------------------------------------------
+Tips
+----
+Use $display statements to understand what's going on in the code. In general
+displays are more useful than waveforms, at least in the beginning
+
+Get used to searching through the reference guide:
+    $BLUESPECDIR/../doc/BSV/bsv-reference-guide.pdf
+
+Get familiar with the Vector library, it will prove very useful. There is a
+chapter on Vectors in the reference guide. 
+
+------------------------------------------------------------------------
+Guidelines
+----------
+
+Comment your code. As a rule of thumb, there should be a line of comment for
+each line of logic in your code.
+
+Place your code in the src_v01 or src_v02 directory, depending on the section
+you are working on. Make all your edits in the BSV files already placed in the
+directories.
+
+Compile your code often. To compile: make
+
+To simulate the design: ./out
+
+To dump waveforms: ./out -V
+You will need a viewer like gtkwave to view the waveforms
+
+------------------------------------------------------------------------
+Directory Structure
+-------------------
+
+src_c      - c routines to check the computation
+src_tb     - BSV testbench
+src_common - type definitions and utility functions for both implementation
+             versions
+src_v01    - your code to implement v01
+src_v02    - your code to implement v02
+build      - location for the files generated during compile
