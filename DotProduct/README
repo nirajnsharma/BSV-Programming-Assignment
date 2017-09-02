@@ -99,3 +99,13 @@ To dump waveforms: ./out -V
 You will need a viewer like gtkwave to view the waveforms
 
 ------------------------------------------------------------------------
+Directory Structure
+-------------------
+
+src_c      - c routines to check the computation
+src_tb     - BSV testbench
+src_common - type definitions and utility functions for both implementation
+             versions
+src_v01    - your code to implement v01
+src_v02    - your code to implement v02
+build      - location for the files generated during compile
