@@ -55,13 +55,22 @@ package Tb;
    // This rule runs continuously feeding data into the DUT. Each time this
    // rule rules, it feeds in one row of the matrix into the DUT
    rule putIn (rg_started);
+      // Generate random data to feed the DUT, and update the LFSRs
       let dIn = {dinGenH.value, dinGenL.value};
-      MatrixRow m = unpack (dIn);
-      f_in.enq (m);
-      f_testNum.enq (rg_numTests);
-      dut.aIn.put (m);
       dinGenH.next; dinGenL.next;
+
+      // Format the data into a row of the matrix
+      MatrixRow m = unpack (dIn);
+
+      // Record the data sent in to compute expected output
+      f_in.enq (m);
+
+      // Record the test-number, also increment for next test
+      f_testNum.enq (rg_numTests);
       rg_numTests <= rg_numTests + 1;
+
+      // Feed the data into the DUT
+      dut.aIn.put (m);
 
       if (debug) $display ("(%5d)::TB::putIn::Test# %0d::",
 	 cur_cycle, rg_numTests, fshow (m));
@@ -70,13 +79,14 @@ package Tb;
    // This rule samples the output from the DUT. Also checks the answer
    // against the expected one
    rule getOut (rg_started);
+      // Retreive the data sent to the DUT along with the test number
       let dIn = f_in.first; f_in.deq;
       let tNum = f_testNum.first; f_testNum.deq;
 
+      // Compute golden value using the C routine
       let ws = rg_ws;
       OutData uv_sum = 0;
 
-      // Compute golden value using the C routine
       for (Integer i=0; i < 8; i = i+1)
 	 uv_sum = c_mac (uv_sum, ws[i], dIn[i]);
 
