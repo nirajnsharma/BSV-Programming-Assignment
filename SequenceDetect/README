@@ -1,0 +1,36 @@
+# Implement an iterative sequence detector in BSV.
+
+* **Input data:** 32-bits (Bit #(32)). This is the data to be searched.
+* **Sequence to be detected:** 3-bits, fixed(hardcoded). Implement this as a register.
+* **Output data:** 32-bits. Number of times the sequence occurs in the input data string.
+
+You are given a skeletal BSV package and you need to fill in the blanks to implement the sequence detector. 
+
+Work your way up from the interface. The interface is already declared for you. You need to fill in the definitions of the methods.
+
+You need to think about what data structures you will need to implement the detector - what needs to be stored, etc. It is a good idea to draw out a rough block diagram showing how the data is flowing before trying to code.
+
+The next step is to break it down to the sequence of steps for each event in your system. 
+
+* What are the actions when you receive a new data word to process?
+* What are the actions for each iteration of the sequence search?
+* What are the actions when your result is ready?
+
+## Submodules
+Declare the submodules you will need. I have already created one as an example.
+
+## Rules
+Now, fill in the rule to actually count the number of times the sequence appears. There are three cases to consider:
+
+* Under what conditions is the rule supposed to run?
+* What all actions do you need to do every time the rule fires?
+* Hint: use the `rg_bufPtr` to figure out what to do.
+
+** Remember **
+You can only receive a new data word to process when you are no longer busy `(rg_busy == False)`
+
+## Part Two
+The input data to be search can now be of any length. The length of the sequence is also an input (say multiples of 32-bits).  In other words it is a data stream where data length is some multiple of 32-bits. Without changing the interface, how will you implement your detector?
+
+## Part Three
+Comparing the whole string that is the sequence of interest is fine when the sequences are tiny, but can become very expensive when the sequences get longer. Think gene sequences running into 100s of letters seached over the entire genome. Change the sequence detector so that its hardware cost is independent of the length of the sequence being searched (hint - use single bit comparisons only). 
